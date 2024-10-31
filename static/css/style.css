@@ -1,0 +1,134 @@
+
+body {
+    background: url('../images/generic.svg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main-layout a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s;
+}
+
+.main-layout a:hover {
+    background-color: #4375b3;
+    color: white;
+}
+
+.form-layout {
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    gap: 5px;
+}
+
+.left-panel {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.right-panel {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 150px;
+}
+
+.right-panel a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.right-panel a:hover {
+    color: #4375b3;
+    text-decoration: underline;
+}
+
+.main-logo {
+    padding: 50px;
+    width: 250px;
+    height: 250px;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.15s ease-in-out;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #2563eb;
+}
+
+.btn-secondary {
+    background-color: #9ca3af;
+    color: white;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #6b7280;
+}
+
+form {
+    max-width: 200px;
+    margin: 0 auto;
+    font-size: small;
+}
+
+form p {
+    margin-bottom: 5px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: medium;
+}
+
+input, select {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+    }
+
+    nav li {
+        margin-bottom: 0.5rem;
+    }
+
+    table {
+        font-size: 0.9rem;
+    }
+}

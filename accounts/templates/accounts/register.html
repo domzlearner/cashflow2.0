@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="form-layout">
+    <div class="left-panel">
+        <img src="{% static 'images/logo.svg' %}" alt="logo" class="main-logo">
+        <p><b>BudgetTrail</b> is a user-friendly financial tool designed to help you track and manage your income, savings, bills, expenses, and debt. <br>
+            It provides a clear path to understanding your cash flow, empowering you to make smarter financial decisions and stay on top of your spending. <br>
+            <br>
+            With <b>BudgetTrail</b>, you can set savings goals, monitor your bills, and manage debts all in one place. <br>
+            Stay on track with your finances and achieve your goals with BudgetTrail, your guide to financial freedom.
+        </p>
+    </div>
+    <div class="right-panel">
+        <h2>Register</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit"; class="btn btn-primary">Register</button>
+        </form>
+        <br>
+        <p>Have an account? <a href="{% url 'accounts:login' %}">Login</a></p>
+    </div>
+</div>
+{% endblock %}
