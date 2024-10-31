@@ -1,5 +1,6 @@
 
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
@@ -11,7 +12,7 @@ def register(request):
             login(request, user)
             # update once transaction is created
             print(user)
-            # return redirect('transactions:dashboard')
+            return redirect('transactions:dashboard')
     else:
         form = UserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
@@ -27,7 +28,12 @@ def user_login(request):
                 login(request, user)
                 # update once transaction is created
                 print(user)
-                # return redirect('transactions:dashboard')
+                return redirect('transactions:dashboard')
     else:
         form = AuthenticationForm()
     return render(request, 'accounts/login.html', {'form': form})
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return redirect('home')

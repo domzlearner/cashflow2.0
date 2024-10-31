@@ -58,10 +58,51 @@ body {
     text-decoration: underline;
 }
 
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: 1fr 6fr;
+    gap: 5px;
+}
+
+.left-dashboard {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+}
+
+.left-dashboard a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s;
+}
+
+.left-dashboard a:hover {
+    background-color: #4375b3;
+    color: white;
+}
+
+.right-dashboard {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+}
+
 .main-logo {
     padding: 50px;
     width: 250px;
     height: 250px;
+}
+
+.small-logo {
+    width: 150px;
+    height: 150px;
 }
 
 .btn {
