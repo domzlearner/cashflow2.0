@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="settings-layout">
+    <div class="left-settings">
+        <h3>Settings</h3>
+        <a href="#" data-target="email">Change Email</a>
+        <a href="#" data-target="password">Change Password</a>
+        <a href="#" data-target="currency">Change Currency</a>
+        <a href="{% url 'transactions:dashboard' %}">Cancel</a>
+    </div>
+    <div class="right-settings">
+        <div id="email" class="settings-form" style="display: none;">
+            <h3>Email</h3>
+            <p>Email: <span id="current-email">{{ user.email }}</span></p>
+            <button id="update-email" class="btn btn-primary">Update</button>
+            <button id="save-email" class="btn btn-primary" style="display: none;">Save</button>
+        </div>
+        <div id="password" class="settings-form" style="display: none;">
+            <h3>Change Password</h3>
+            <form id="password-form">
+                {% csrf_token %}
+                <p>New Password: <input type="password" id="new-password" required></p>
+                <p>Confirm Password: <input type="password" id="confirm-password" required></p>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+        <div id="currency" class="settings-form" style="display: none;">
+            <h3>Currency</h3>
+            <p>Current Currency: <span id="current-currency">{{ user.currency }}</span></p>
+            <button id="update-currency" class="btn btn-primary">Update</button>
+            <button id="save-currency" class="btn btn-primary" style="display: none;">Save</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const settingsForms = document.querySelectorAll('.settings-form');
+        const settingsLinks = document.querySelectorAll('.left-settings a');
+    
+        // Show/hide settings forms
+        settingsLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.getAttribute('href') !== '#') return;
+                e.preventDefault();
+                const targetId = this.getAttribute('data-target');
+                settingsForms.forEach(form => {
+                    form.style.display = form.id === targetId ? 'block' : 'none';
+                });
+            });
+        });
+    
+        // Email update functionality
+        const currentEmail = document.getElementById('current-email');
+        const updateEmailBtn = document.getElementById('update-email');
+        const saveEmailBtn = document.getElementById('save-email');
+    
+        updateEmailBtn.addEventListener('click', function() {
+            currentEmail.contentEditable = true;
+            currentEmail.focus();
+            updateEmailBtn.style.display = 'none';
+            saveEmailBtn.style.display = 'inline-block';
+        });
+    
+        saveEmailBtn.addEventListener('click', function() {
+            const newEmail = currentEmail.textContent;
+            fetch('{% url "accounts:update_email" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ email: newEmail })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentEmail.contentEditable = false;
+                    updateEmailBtn.style.display = 'inline-block';
+                    saveEmailBtn.style.display = 'none';
+                    alert('Email updated successfully');
+                } else {
+                    alert('Failed to update email');
+                }
+            });
+        });
+    
+        // Password change functionality
+        const passwordForm = document.getElementById('password-form');
+        passwordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (newPassword !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+    
+            fetch('{% url "accounts:update_password" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ password: newPassword })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Password updated successfully');
+                    passwordForm.reset();
+                } else {
+                    alert('Failed to update password');
+                }
+            });
+        });
+    
+        // Currency update functionality
+        const currentCurrency = document.getElementById('current-currency');
+        const updateCurrencyBtn = document.getElementById('update-currency');
+        const saveCurrencyBtn = document.getElementById('save-currency');
+    
+        updateCurrencyBtn.addEventListener('click', function() {
+            const select = document.createElement('select');
+            const currencies = ['USD', 'EUR', 'PHP', 'JPY', 'NONE'];
+            currencies.forEach(currency => {
+                const option = document.createElement('option');
+                option.value = currency;
+                option.textContent = currency;
+                if (currency === currentCurrency.textContent) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+            currentCurrency.innerHTML = '';
+            currentCurrency.appendChild(select);
+            updateCurrencyBtn.style.display = 'none';
+            saveCurrencyBtn.style.display = 'inline-block';
+        });
+    
+        saveCurrencyBtn.addEventListener('click', function() {
+            const newCurrency = currentCurrency.querySelector('select').value;
+            fetch('{% url "accounts:update_currency" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ currency: newCurrency })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentCurrency.innerHTML = newCurrency;
+                    updateCurrencyBtn.style.display = 'inline-block';
+                    saveCurrencyBtn.style.display = 'none';
+                    alert('Currency updated successfully');
+                } else {
+                    alert('Failed to update currency');
+                }
+            });
+        });
+    });
+    </script>
+{% endblock %}

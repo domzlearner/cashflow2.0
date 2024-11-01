@@ -137,6 +137,44 @@ body {
     color: #dc3545;
 }
 
+/* settings */
+.settings-layout {
+    display: grid;
+    grid-template-columns: 1fr 6fr;
+    gap: 5px;
+}
+
+.left-settings {
+    background-color: #81aef72d;
+    border-radius: 10px;
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    padding: 10px;
+    height: 900px;
+}
+
+.left-settings a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.left-settings a:hover {
+    text-decoration: underline;
+}
+
+.right-settings {
+    grid-column: 2;
+    justify-items: left;
+    padding-top: 10px;
+}
+
+.settings-form {
+    padding: 10px;
+
+}
+
 /* generic styles */
 
 .btn {
