@@ -76,11 +76,15 @@ body {
 }
 
 .left-dashboard {
+    background-color: #81aef72d;
+    border-radius: 10px;
     grid-column: 1;
     display: flex;
+    border-radius: 10px;
     flex-direction: column;
     align-items: center;
-    padding-top: 10px;
+    padding: 10px;
+    height: 900px;
 }
 
 .left-dashboard a {
@@ -107,7 +111,6 @@ body {
 
 .right-dashboard table th {
     text-align: center;
-    border: 0.25px solid #ddd;
     padding: 3px;
 }
 
@@ -156,12 +159,17 @@ body {
 }
 
 .left-settings a {
+    color: #2563eb;
     text-decoration: none;
-    color: #007bff;
+    font-weight: 500;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s;
 }
 
 .left-settings a:hover {
-    text-decoration: underline;
+    background-color: #4375b3;
+    color: white;
 }
 
 .right-settings {
