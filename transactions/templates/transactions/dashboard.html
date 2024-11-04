@@ -9,9 +9,40 @@
         <a href="{% url 'transactions:add_transaction' %}?type=expense" class="btn">Add Expense</a>
         <a href="{% url 'accounts:settings' %}" class="btn">Settings</a>
         <a href="{% url 'accounts:logout' %}" class="btn">Logout</a>
+        <br>
+        <div class="month-selector">
+            <select id="month-select">
+                {% for value, label in month_choices %}
+                    <option value="{{ value }}" {% if value == selected_month %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
     </div>
     <div class="right-dashboard">
-        {% include 'transactions/transaction_table.html' %}
+        <div class="chart-layout">
+            <div class="left-chart">
+                {% include "transactions/income_expense_chart.html" %}
+            </div>
+            <div class="right-chart">
+                <h2>Balance</h2>
+                <p class="amount {% if balance >= 0 %}positive{% else %}negative{% endif %}">
+                    {{ balance|floatformat:2 }}
+                </p>
+            </div>
+        </div>
+        
+        {% include "transactions/transaction_table.html" %}
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var monthSelect = document.getElementById('month-select');
+        if (monthSelect) {
+            monthSelect.addEventListener('change', function() {
+                window.location.href = '{% url "transactions:dashboard" %}?month=' + this.value;
+            });
+        }
+    });
+</script>
 {% endblock %}

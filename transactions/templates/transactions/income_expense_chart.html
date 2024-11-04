@@ -1,0 +1,23 @@
+
+<div id="income-expense-chart"></div>
+<script>
+    // Income vs Expense Chart
+    var incomeExpenseData = JSON.parse('{{ income_vs_expense|escapejs }}');
+    var incomeExpenseOptions = 
+    {
+        series: incomeExpenseData.map(item => item.value),
+        labels: incomeExpenseData.map(item => item.name),
+        chart: 
+        {
+            type: 'donut',
+            height: 300
+        },
+        colors: ['#4CAF50', '#F44336'],
+        legend: 
+        {
+            show: false
+        }
+    };
+    var incomeExpenseChart = new ApexCharts(document.getElementById('income-expense-chart'), incomeExpenseOptions);
+    incomeExpenseChart.render().catch(error => console.error("Render error:", error));
+</script>

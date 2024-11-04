@@ -183,6 +183,31 @@ body {
 
 }
 
+/* chart style */
+.month-selector {
+    padding: 5px;
+}
+
+.chart-layout {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+}
+
+.left-chart {
+    grid-column: 1/3;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+.right-chart {
+    grid-column: 4/6;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
 /* generic styles */
 
 .btn {
