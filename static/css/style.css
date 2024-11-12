@@ -199,6 +199,7 @@ body {
     display: flex;
     flex-direction: column;
     align-content: center;
+    align-items: center;
 }
 
 .right-chart {
@@ -206,6 +207,7 @@ body {
     display: flex;
     flex-direction: column;
     align-content: center;
+    align-items: center;
 }
 
 /* generic styles */

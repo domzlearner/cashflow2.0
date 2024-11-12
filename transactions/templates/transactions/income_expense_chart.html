@@ -1,7 +1,6 @@
 
-<div>
 <canvas id="incomeExpenseChart" width="300" height="300"></canvas>
-</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
  
@@ -17,7 +16,7 @@
                 : balance.toFixed(2).toLocaleString();
 
             ctx.save();
-            ctx.font = '30px Arial';  // Font size for center text
+            ctx.font = '25px Arial';  // Font size for center text
             ctx.fillStyle = '#333';   // Font color
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -35,7 +34,7 @@
             data: incomeExpenseData.map(item => item.value),
             backgroundColor: ['#98e098', '#ff9999'],  // Green for Income, Red for Expenses
             hoverBackgroundColor: ['#4CAF50', '#F44336'],
-            borderWidth: 1
+            borderWidth: 0.5
         }]
     };
 
@@ -51,7 +50,8 @@
                     display: false
                 }
             }
-        }
+        },
+        plugins: [centerTextPlugin]
     };
 
     const incomeExpenseChart = new Chart(document.getElementById('incomeExpenseChart'), config);

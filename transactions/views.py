@@ -62,6 +62,8 @@ def dashboard(request):
         {'name': 'Expenses', 'value': float(month_data['expenses'])},
     ]
 
+    expense_categories = month_data['expense_categories']
+
     transactions = Transaction.objects.filter(user=request.user).annotate(latest_date=Max('date')).order_by('-date')[:10]
     
     context = {
@@ -72,12 +74,12 @@ def dashboard(request):
         'expenses': float(month_data['expenses']),
         'balance': float(month_data['income'] - month_data['expenses']),
         'income_vs_expense': json.dumps(income_vs_expense),
-        'expense_categories': json.dumps(month_data['expense_categories']),
+        'expense_categories': json.dumps(expense_categories),
     }
     
     # print("Income vs Expense Data:", income_vs_expense)
     # print("Expense Categories Data:", month_data['expense_categories'])
-    print("balance:", float(month_data['income'] - month_data['expenses']))
+    # print("balance:", float(month_data['income'] - month_data['expenses']))
     
     return render(request, 'transactions/dashboard.html', context)
 

@@ -1,10 +1,31 @@
 
-<div>
-    <canvas id="expenseCategoryChart" width="350" height="350"></canvas>
-</div>
+<canvas id="expenseCategoryChart" width="350" height="350"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
     const expenseCategories = JSON.parse('{{ expense_categories|escapejs }}');
+    const expenses = {{ expenses|floatformat:2 }};
+
+    const exp_centerTextPlugin = {
+        id: 'centerText',
+        afterDatasetsDraw(chart) {
+            const { ctx, chartArea: { width, height } } = chart;
+            const displayAmount = Number.isInteger(expenses) 
+                ? expenses.toLocaleString() 
+                : expenses.toFixed(2).toLocaleString();
+
+            ctx.save();
+            ctx.font = '25px Arial';  // Font size for center text
+            ctx.fillStyle = '#333';   // Font color
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(displayAmount, width / 2, height / 2);  // Center the balance
+            ctx.restore();
+        }
+    };
+
+    Chart.register(exp_centerTextPlugin);
+
 
     const categoryNames = expenseCategories.map(item => item.category);
     const categoryTotals = expenseCategories.map(item => item.total);
@@ -16,7 +37,7 @@
             data: categoryTotals,
             backgroundColor: ['#ffcccb', '#c2f0c2', '#e2b3ff', '#ffdd99'],  // Customize colors as needed
             hoverBackgroundColor: ['#ff9999', '#98e098', '#d39dff', '#ffbf80'],
-            borderWidth: 1
+            borderWidth: 0.5
         }]
     };
 
@@ -33,7 +54,8 @@
                     position: 'bottom'  // Position the legend at the bottom
                 }
             }
-        }
+        },
+        plugins: [exp_centerTextPlugin]
     };
 
     // Create the chart
