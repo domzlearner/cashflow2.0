@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <div class="left-dashboard">
+        <h2>Update {{ transaction|title }}</h2>
+        <form id="update-transaction-form" method="post" action="{% url 'transactions:update_transaction' transaction.id %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="hidden" name="type" value="{{ transaction_type }}">
+            <button type="submit"; class="btn btn-primary">Update</button>
+            <a href="{% url 'transactions:dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+            const updateForm = document.querySelector('#update-transaction-form');
+            
+            if (updateForm) {
+                updateForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const formData = new FormData(updateForm);
+
+                    fetch(updateForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            // location.reload();
+                            window.location.href = data.redirect_url;
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            }
+        });
+
+        // Helper function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        </script>
+    </div>
+    <div class="right-dashboard">
+        {% include 'transactions/transaction_table.html' %}
+    </div>
+</div>
+
+{% endblock %}

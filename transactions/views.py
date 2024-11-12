@@ -1,10 +1,14 @@
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404, reverse
+from django.views import View
 from django.contrib.auth.decorators import login_required
 from .models import Transaction
 from .forms import TransactionForm
 from django.db.models import Sum
 from datetime import datetime, timedelta
+from django.db.models import Max
+from django.http import JsonResponse
+from django.utils.decorators import method_decorator
 import json
 
 def get_month_choices():
@@ -58,7 +62,7 @@ def dashboard(request):
         {'name': 'Expenses', 'value': float(month_data['expenses'])},
     ]
 
-    transactions = Transaction.objects.filter(user=request.user).order_by('-date')[:10]
+    transactions = Transaction.objects.filter(user=request.user).annotate(latest_date=Max('date')).order_by('-date')[:10]
     
     context = {
         'transactions': transactions,
@@ -71,8 +75,8 @@ def dashboard(request):
         'expense_categories': json.dumps(month_data['expense_categories']),
     }
     
-    print("Income vs Expense Data:", income_vs_expense)
-    print("Expense Categories Data:", month_data['expense_categories'])
+    # print("Income vs Expense Data:", income_vs_expense)
+    # print("Expense Categories Data:", month_data['expense_categories'])
     
     return render(request, 'transactions/dashboard.html', context)
 
@@ -96,4 +100,39 @@ def add_transaction(request):
         'transaction_type': transaction_type,
         'transactions': transactions
     }
-    return render(request, 'transactions/transaction_form.html', context)
+    return render(request, 'transactions/add_transaction_form.html', context)
+
+@method_decorator(login_required, name='dispatch')
+class UpdateTransaction(View):
+    def get(self, request, pk):
+        transaction = get_object_or_404(Transaction, pk=pk, user=request.user)
+        transactions = Transaction.objects.filter(user=request.user).order_by('-date')
+        form = TransactionForm(instance=transaction)
+
+        context = {
+        'form': form,
+        'transaction': transaction,
+        'transactions': transactions
+        }
+
+        return render(request, 'transactions/update_transaction_form.html', context)
+
+    def post(self, request, pk):
+        transaction = get_object_or_404(Transaction, pk=pk, user=request.user)
+        form = TransactionForm(request.POST, instance=transaction)
+        if form.is_valid():
+            form.save()
+            # return JsonResponse({'success': True, 'message': 'Transaction updated successfully!'})
+            return JsonResponse({
+                'success': True, 
+                'message': 'Transaction updated successfully!',
+                'redirect_url': reverse('transactions:dashboard')
+            })
+        return JsonResponse({'success': False, 'message': 'Form is invalid.', 'errors': form.errors}, status=400)
+
+@method_decorator(login_required, name='dispatch')
+class DeleteTransaction(View):
+    def post(self, request, pk):
+        transaction = get_object_or_404(Transaction, pk=pk, user=request.user)
+        transaction.delete()
+        return JsonResponse({'success': True, 'message': 'Transaction deleted successfully!'})

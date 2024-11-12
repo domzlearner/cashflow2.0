@@ -1,0 +1,67 @@
+
+<h3>Recent Transactions</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for transaction in transactions %}
+            <tr id="transaction-{{ transaction.id }}">
+                <td>{{ transaction.date }}</td>
+                <td>{{ transaction.description }}</td>
+                <td>{{ transaction.get_type_display }}</td>
+                <td>{{ transaction.get_category_display|default_if_none:"-" }}</td>
+                <td class="amount {% if transaction.type == 'expense' %}amount-expense{% else %}amount-income{% endif %}">
+                    {% if transaction.type == 'expense' %}-{% endif %}{{ transaction.amount|floatformat:2 }}
+                </td>
+                <td>
+                    <a href="{% url 'transactions:update_transaction' transaction.id %}" class="btn btn-small" onclick="editTransaction(event, {{ transaction.id }})">Edit</a>
+                    <button class="btn btn-small btn-danger" onclick="deleteTransaction({{ transaction.id }})">Delete</button>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="6">No transactions found.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    function editTransaction(event, id) {
+        event.preventDefault();
+        // alert('Redirecting to edit page.');  // You can replace this with more detailed logic if needed.
+        window.location.href = `/tx/update/${id}/`;
+    }
+
+    function deleteTransaction(id) {
+        if (confirm('Are you sure you want to delete this transaction?')) {
+            fetch(`/tx/delete/${id}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    document.getElementById(`transaction-${id}`).remove();
+                } else {
+                    alert('Error deleting transaction.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while deleting the transaction.');
+            });
+        }
+    }
+</script>
