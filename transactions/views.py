@@ -77,6 +77,7 @@ def dashboard(request):
     
     # print("Income vs Expense Data:", income_vs_expense)
     # print("Expense Categories Data:", month_data['expense_categories'])
+    print("balance:", float(month_data['income'] - month_data['expenses']))
     
     return render(request, 'transactions/dashboard.html', context)
 

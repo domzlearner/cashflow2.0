@@ -1,0 +1,41 @@
+
+<div>
+    <canvas id="expenseCategoryChart" width="350" height="350"></canvas>
+</div>
+
+<script>
+    const expenseCategories = JSON.parse('{{ expense_categories|escapejs }}');
+
+    const categoryNames = expenseCategories.map(item => item.category);
+    const categoryTotals = expenseCategories.map(item => item.total);
+
+    const exp_data = {
+        labels: categoryNames,
+        datasets: [{
+            label: 'Amount',
+            data: categoryTotals,
+            backgroundColor: ['#ffcccb', '#c2f0c2', '#e2b3ff', '#ffdd99'],  // Customize colors as needed
+            hoverBackgroundColor: ['#ff9999', '#98e098', '#d39dff', '#ffbf80'],
+            borderWidth: 1
+        }]
+    };
+
+    const exp_config = {
+        type: 'doughnut',
+        data: exp_data,
+        options: {
+            responsive: false,
+            maintainAspectRatio: true,
+            cutout: '70%',  // Makes the donut chart (inner circle)
+            plugins: {
+                legend: {
+                    display: true,  // Display the legend for categories
+                    position: 'bottom'  // Position the legend at the bottom
+                }
+            }
+        }
+    };
+
+    // Create the chart
+    const expenseCategoryChart = new Chart(document.getElementById('expenseCategoryChart'), exp_config);
+</script>

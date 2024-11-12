@@ -24,10 +24,11 @@
                 {% include "transactions/income_expense_chart.html" %}
             </div>
             <div class="right-chart">
-                <h2>Balance</h2>
+                {% include "transactions/expense_category_chart.html" %}
+                <!-- <h2>Balance</h2>
                 <p class="amount {% if balance >= 0 %}positive{% else %}negative{% endif %}">
                     {{ balance|floatformat:2 }}
-                </p>
+                </p> -->
             </div>
         </div>
         

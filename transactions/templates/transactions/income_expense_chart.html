@@ -1,23 +1,59 @@
 
-<div id="income-expense-chart"></div>
+<div>
+<canvas id="incomeExpenseChart" width="300" height="300"></canvas>
+</div>
+
 <script>
-    // Income vs Expense Chart
-    var incomeExpenseData = JSON.parse('{{ income_vs_expense|escapejs }}');
-    var incomeExpenseOptions = 
-    {
-        series: incomeExpenseData.map(item => item.value),
-        labels: incomeExpenseData.map(item => item.name),
-        chart: 
-        {
-            type: 'donut',
-            height: 300
-        },
-        colors: ['#4CAF50', '#F44336'],
-        legend: 
-        {
-            show: false
+ 
+    const incomeExpenseData = JSON.parse('{{ income_vs_expense|escapejs }}');
+    const balance = {{ balance|floatformat:2 }};
+
+    const centerTextPlugin = {
+        id: 'centerText',
+        afterDatasetsDraw(chart) {
+            const { ctx, chartArea: { width, height } } = chart;
+            const displayAmount = Number.isInteger(balance) 
+                ? balance.toLocaleString() 
+                : balance.toFixed(2).toLocaleString();
+
+            ctx.save();
+            ctx.font = '30px Arial';  // Font size for center text
+            ctx.fillStyle = '#333';   // Font color
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(displayAmount, width / 2, height / 2);  // Center the balance
+            ctx.restore();
         }
     };
-    var incomeExpenseChart = new ApexCharts(document.getElementById('income-expense-chart'), incomeExpenseOptions);
-    incomeExpenseChart.render().catch(error => console.error("Render error:", error));
+
+    Chart.register(centerTextPlugin);
+
+    const data = {
+        labels: incomeExpenseData.map(item => item.name),
+        datasets: [{
+            label: 'Amount',
+            data: incomeExpenseData.map(item => item.value),
+            backgroundColor: ['#98e098', '#ff9999'],  // Green for Income, Red for Expenses
+            hoverBackgroundColor: ['#4CAF50', '#F44336'],
+            borderWidth: 1
+        }]
+    };
+
+    const config = {
+        type: 'doughnut',
+        data: data,
+        options: {
+            responsive: false,
+            maintainAspectRatio: true,
+            cutout: '70%',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    };
+
+    const incomeExpenseChart = new Chart(document.getElementById('incomeExpenseChart'), config);
+
 </script>
