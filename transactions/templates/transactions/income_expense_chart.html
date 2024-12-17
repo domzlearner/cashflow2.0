@@ -4,7 +4,7 @@
 
 <script>
  
-    const incomeExpenseData = JSON.parse('{{ income_vs_expense|escapejs }}');
+    const incomeExpenseData = JSON.parse('{{ expense_vs_balance|escapejs }}');
     const balance = {{ balance|floatformat:2 }};
 
     const centerTextPlugin = {
@@ -32,8 +32,8 @@
         datasets: [{
             label: 'Amount',
             data: incomeExpenseData.map(item => item.value),
-            backgroundColor: ['#98e098', '#ff9999'],  // Green for Income, Red for Expenses
-            hoverBackgroundColor: ['#4CAF50', '#F44336'],
+            backgroundColor: ['#ff9999', '#98e098'],  // Green for Balance, Red for Expenses
+            hoverBackgroundColor: ['#F44336', '#4CAF50'],
             borderWidth: 0.5
         }]
     };

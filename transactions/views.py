@@ -56,10 +56,10 @@ def dashboard(request):
     
     month_data = get_month_data(request.user, year, month)
     
-    # Income vs Expense breakdown
-    income_vs_expense = [
-        {'name': 'Income', 'value': float(month_data['income'])},
+    # Income vs Balance breakdown
+    expense_vs_balance = [
         {'name': 'Expenses', 'value': float(month_data['expenses'])},
+        {'name': 'Balance', 'value': float(month_data['income'] - month_data['expenses'])},
     ]
 
     expense_categories = month_data['expense_categories']
@@ -73,7 +73,7 @@ def dashboard(request):
         'income': float(month_data['income']),
         'expenses': float(month_data['expenses']),
         'balance': float(month_data['income'] - month_data['expenses']),
-        'income_vs_expense': json.dumps(income_vs_expense),
+        'expense_vs_balance': json.dumps(expense_vs_balance),
         'expense_categories': json.dumps(expense_categories),
     }
     

@@ -10,6 +10,8 @@ class Transaction(models.Model):
     EXPENSE_CATEGORIES = (
         ('bills', 'Bills'),
         ('debts', 'Debts'),
+        ('food', 'Food'),
+        ('grocery', 'Grocery'),
         ('savings', 'Savings'),
         ('others', 'Others'),
     )
