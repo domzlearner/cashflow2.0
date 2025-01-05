@@ -55,11 +55,15 @@ def dashboard(request):
     year, month = map(int, selected_month.split('-'))
     
     month_data = get_month_data(request.user, year, month)
+
+    income = float(month_data['income'])
+    expenses = float(month_data['expenses'])
+    balance = income - expenses #if income > 0 else 0.0
     
     # Income vs Balance breakdown
     expense_vs_balance = [
-        {'name': 'Expenses', 'value': float(month_data['expenses'])},
-        {'name': 'Balance', 'value': float(month_data['income'] - month_data['expenses'])},
+        {'name': 'Expenses', 'value': expenses},
+        {'name': 'Balance', 'value': balance},
     ]
 
     expense_categories = month_data['expense_categories']
@@ -70,9 +74,9 @@ def dashboard(request):
         'transactions': transactions,
         'month_choices': get_month_choices(),
         'selected_month': selected_month,
-        'income': float(month_data['income']),
-        'expenses': float(month_data['expenses']),
-        'balance': float(month_data['income'] - month_data['expenses']),
+        'income': income,
+        'expenses': expenses,
+        'balance': balance,
         'expense_vs_balance': json.dumps(expense_vs_balance),
         'expense_categories': json.dumps(expense_categories),
     }

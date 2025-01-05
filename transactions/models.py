@@ -12,6 +12,7 @@ class Transaction(models.Model):
         ('debts', 'Debts'),
         ('food', 'Food'),
         ('grocery', 'Grocery'),
+        ('medicine', 'Medicine'),
         ('savings', 'Savings'),
         ('others', 'Others'),
     )
@@ -19,7 +20,7 @@ class Transaction(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     description = models.CharField(max_length=255)
     type = models.CharField(max_length=7, choices=TRANSACTION_TYPES)
-    category = models.CharField(max_length=7, choices=EXPENSE_CATEGORIES, null=True, blank=True)
+    category = models.CharField(max_length=10, choices=EXPENSE_CATEGORIES, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
 
