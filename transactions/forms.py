@@ -1,6 +1,7 @@
 
 from django import forms
-from .models import Transaction
+from .models import Transaction, Budget
+from .utils import get_month_choices
 
 class TransactionForm(forms.ModelForm):
     class Meta:
@@ -25,3 +26,13 @@ class TransactionForm(forms.ModelForm):
         if self.transaction_type == 'expense' and not cleaned_data.get('category'):
             raise forms.ValidationError("Category is required for expenses.")
         return cleaned_data
+    
+class BudgetForm(forms.ModelForm):
+    class Meta:
+        model = Budget
+        fields = ['category', 'amount', 'period']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['period'] = forms.ChoiceField(choices=get_month_choices(), label="Period")

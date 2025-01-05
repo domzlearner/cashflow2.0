@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <div class="left-dashboard">
+        <h2>Create Budget</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit"; class="btn btn-primary">Save</button>
+            <a href="{% url 'transactions:dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+    <div class="right-dashboard">
+        {% include 'transactions/budget_table.html' %}
+    </div>
+</div>
+{% endblock %}

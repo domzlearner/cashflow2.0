@@ -2,8 +2,9 @@
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.views import View
 from django.contrib.auth.decorators import login_required
-from .models import Transaction
-from .forms import TransactionForm
+from .models import Transaction, Budget
+from .forms import TransactionForm, BudgetForm
+from .utils import get_month_choices
 from django.db.models import Sum
 from datetime import datetime, timedelta
 from django.db.models import Max
@@ -11,16 +12,6 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 import json
 
-def get_month_choices():
-    end_date = datetime.now().date().replace(day=1)
-    start_date = end_date - timedelta(days=365)
-    months = []
-    current = start_date
-    while current <= end_date:
-        months.append((current.strftime('%Y-%m'), current.strftime('%B %Y')))
-        current += timedelta(days=32)
-        current = current.replace(day=1)
-    return months
 
 def get_month_data(user, year, month):
     start_date = datetime(year, month, 1)
@@ -59,6 +50,7 @@ def dashboard(request):
     income = float(month_data['income'])
     expenses = float(month_data['expenses'])
     balance = income - expenses #if income > 0 else 0.0
+    
     
     # Income vs Balance breakdown
     expense_vs_balance = [
@@ -108,6 +100,27 @@ def add_transaction(request):
         'transactions': transactions
     }
     return render(request, 'transactions/add_transaction_form.html', context)
+
+@login_required
+def create_budget(request):
+    # print(get_month_choices())
+    budgets = Budget.objects.filter(user=request.user).order_by('-period')
+
+    if request.method == 'POST':
+        form = BudgetForm(request.POST, user=request.user)
+        if form.is_valid():
+            budget = form.save(commit=False)
+            budget.user = request.user
+            budget.save()
+            return redirect('transactions:dashboard')
+    else:
+        form = BudgetForm(user=request.user)
+
+    context = {
+        'form': form,
+        'budgets': budgets,
+    }
+    return render(request, 'transactions/create_budget.html', context)
 
 @method_decorator(login_required, name='dispatch')
 class UpdateTransaction(View):

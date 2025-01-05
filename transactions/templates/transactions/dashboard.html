@@ -7,6 +7,7 @@
         <img src="{% static 'images/logo.svg' %}" alt="logo" class="small-logo">
         <a href="{% url 'transactions:add_transaction' %}?type=income" class="btn">Add Income</a>
         <a href="{% url 'transactions:add_transaction' %}?type=expense" class="btn">Add Expense</a>
+        <a href="{% url 'transactions:create_budget' %}" class="btn">Create Budget</a>
         <a href="{% url 'accounts:settings' %}" class="btn">Settings</a>
         <a href="{% url 'accounts:logout' %}" class="btn">Logout</a>
         <br>
