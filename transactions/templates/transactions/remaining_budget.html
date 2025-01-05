@@ -1,0 +1,79 @@
+<canvas id="remainingBudgetChart" width="400" height="400"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+<script>
+    const chartData = {{ chart_data|safe }};
+    const categories = chartData.map(data => data.category);
+    const consumedData = chartData.map(data => data.consumed);
+    const remainingData = chartData.map(data => data.remaining);
+
+    const ctx = document.getElementById('remainingBudgetChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: categories,
+            datasets: [
+                {
+                    label: 'Consumed',
+                    data: consumedData,
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)', // Red
+                },
+                {
+                    label: 'Remaining',
+                    data: remainingData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)', // Green
+                }
+            ]
+        },
+        options: {
+            responsive: false,
+            plugins: {
+                legend: { display: false }, // Remove legend
+                title: {
+                    display: false,
+                    text: 'Remaining vs Consumed Budget'
+                },
+                tooltip: {
+                    enabled: false // Disable tooltips
+                },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    formatter: (value, ctx) => {
+                        if (ctx.dataset.label === 'Remaining') {
+                            return value.toFixed(2); // Show remaining value only
+                        }
+                        return null;
+                    },
+                    color: '#000',
+                    font: {
+                        family: 'Arial',
+                        size: '12',
+                        weight: 'normal'
+                    },
+                    padding: 5
+                }
+            },
+            layout: {
+                padding: {
+                    top: 35,
+                    bottom: 10
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    grid: { display: false } // Remove vertical grid lines
+                },
+                y: {
+                    stacked: true,
+                    grid: { display: false }, // Remove horizontal grid lines
+                    ticks: { display: false } // Hide Y-axis numbers
+                }
+            }
+        },
+        plugins: [ChartDataLabels] // Enable Chart.js Data Labels plugin
+    });
+</script>

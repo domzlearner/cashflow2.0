@@ -4,41 +4,41 @@ from django.views import View
 from django.contrib.auth.decorators import login_required
 from .models import Transaction, Budget
 from .forms import TransactionForm, BudgetForm
-from .utils import get_month_choices
+from .utils import get_month_choices, get_month_data
 from django.db.models import Sum
-from datetime import datetime, timedelta
+from datetime import datetime #, timedelta
 from django.db.models import Max
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 import json
 
 
-def get_month_data(user, year, month):
-    start_date = datetime(year, month, 1)
-    end_date = (start_date + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+# def get_month_data(user, year, month):
+#     start_date = datetime(year, month, 1)
+#     end_date = (start_date + timedelta(days=32)).replace(day=1) - timedelta(days=1)
     
-    transactions = Transaction.objects.filter(
-        user=user,
-        date__range=(start_date, end_date)
-    )
+#     transactions = Transaction.objects.filter(
+#         user=user,
+#         date__range=(start_date, end_date)
+#     )
     
-    income = transactions.filter(type='income').aggregate(Sum('amount'))['amount__sum'] or 0
-    expenses = transactions.filter(type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
+#     income = transactions.filter(type='income').aggregate(Sum('amount'))['amount__sum'] or 0
+#     expenses = transactions.filter(type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
     
-    expense_categories = list(transactions.filter(type='expense')
-        .values('category')
-        .annotate(total=Sum('amount'))
-        .order_by('-total'))
+#     expense_categories = list(transactions.filter(type='expense')
+#         .values('category')
+#         .annotate(total=Sum('amount'))
+#         .order_by('-total'))
     
-    # Convert all numeric values to float
-    return {
-        'income': float(income),
-        'expenses': float(expenses),
-        'expense_categories': [
-            {'category': item['category'] or 'Uncategorized', 'total': float(item['total'])}
-            for item in expense_categories
-        ]
-    }
+#     # Convert all numeric values to float
+#     return {
+#         'income': float(income),
+#         'expenses': float(expenses),
+#         'expense_categories': [
+#             {'category': item['category'] or 'Uncategorized', 'total': float(item['total'])}
+#             for item in expense_categories
+#         ]
+#     }
 
 @login_required
 def dashboard(request):
@@ -76,7 +76,7 @@ def dashboard(request):
     # print("Income vs Expense Data:", income_vs_expense)
     # print("Expense Categories Data:", month_data['expense_categories'])
     # print("balance:", float(month_data['income'] - month_data['expenses']))
-    
+    print(selected_month)
     return render(request, 'transactions/dashboard.html', context)
 
 @login_required
@@ -116,9 +116,37 @@ def create_budget(request):
     else:
         form = BudgetForm(user=request.user)
 
+    selected_month = request.GET.get('month', datetime.now().strftime('%Y-%m'))
+    year, month = map(int, selected_month.split('-'))
+
+    # budgets = Budget.objects.filter(user=request.user)
+    transactions = Transaction.objects.filter(
+        user=request.user,
+        type='expense',
+        date__year=year,
+        date__month=month
+    )
+
+    budget_data = []
+    for budget in budgets:
+        category_transactions = transactions.filter(category=budget.category)
+        consumed_amount = category_transactions.aggregate(Sum('amount'))['amount__sum'] or 0
+        remaining_amount = budget.amount - consumed_amount
+        
+        budget_data.append({
+            'category': budget.category,
+            'consumed': float(consumed_amount),
+            'remaining': float(remaining_amount),
+        })
+
+    chart_data = json.dumps(budget_data)
+
     context = {
         'form': form,
         'budgets': budgets,
+        'chart_data': chart_data,
+        'month_choices': get_month_choices(),
+        'selected_month': selected_month,
     }
     return render(request, 'transactions/create_budget.html', context)
 

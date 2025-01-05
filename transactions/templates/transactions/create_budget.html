@@ -13,7 +13,16 @@
         </form>
     </div>
     <div class="right-dashboard">
-        {% include 'transactions/budget_table.html' %}
+        <div>
+            {% include 'transactions/budget_table.html' %}
+        </div>
+        <div>
+            <br>
+        </div>
+        <div>
+            <h3>Remaining Budget</h3>
+            {% include 'transactions/remaining_budget.html' %}
+        </div>
     </div>
 </div>
 {% endblock %}
